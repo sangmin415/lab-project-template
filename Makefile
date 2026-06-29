@@ -125,7 +125,7 @@ $(BUILD)/$(FPGA_TOP).json : $(ICE) $(SRC)/* $(PINMAP)
 	# if build folder doesn't exist, create it
 	mkdir -p $(BUILD)
 	# synthesize using Yosys
-	$(YOSYS) -p "read_verilog -sv -noblackbox $(ICE) $(UART) $(SRC)/*; synth_ice40 -top ice40hx8k -json $(BUILD)/$(FPGA_TOP).json"
+	$(YOSYS) -p "read_verilog -sv -noblackbox $(ICE) $(UART) $(SRC)/*; synth_ice40 -top ice40hx8k; write_json -noscopeinfo $(BUILD)/$(FPGA_TOP).json"
 
 
 # Place and route design using nextpnr

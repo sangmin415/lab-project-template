@@ -8,12 +8,6 @@
 export PATH := /home/shay/a/ece270/bin:$(PATH)
 export LD_LIBRARY_PATH := /home/shay/a/ece270/lib:$(LD_LIBRARY_PATH)
 
-# Variables for PDK Installation
-export PDK_ROOT := $(PWD)/pdks
-export PDK := sky130A
-export PDK_PATH := $(PDK_ROOT)/$(PDK)
-export PDK_VERSION_TAG := 0fe599b2afb6708d281543108caf8310912f54af
-
 YOSYS=yosys
 NEXTPNR=nextpnr-ice40
 SHELL=bash
@@ -34,8 +28,7 @@ TIMEDEV = hx8k
 FOOTPRINT = ct256
 
 # PDK sky130A Standard Cell Libraries
-LIBERTY := $(PDK_PATH)/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_100C_1v80.lib
-VERILOG := $(PDK_PATH)/libs.ref/sky130_fd_sc_hd/verilog/primitives.v $(PDK_PATH)/libs.ref/sky130_fd_sc_hd/verilog/sky130_fd_sc_hd.v
+VERILOG := /usr/share/yosys/ice40/cells_sim.v /usr/share/yosys/ice40/cells_map.v
 
 help:
 	@echo -e "Help..."
@@ -53,11 +46,7 @@ setup_pdk:
 # Check environment (sky130A must be loaded)
 .PHONY: check_env
 check_env:
-	@if [ -z "$$(ls -A $(PDK_ROOT) 2>/dev/null)" ]; then \
-		echo -e "\nERROR: PDK not found! Have you run \"make setup_pdk\"?\n" >&2; exit 1; \
-	else \
-		echo -e "\nEnvironment setup correctly!\n"; \
-	fi
+	echo -e "\nEnvironment setup correctly!\n";
 
 # *******************************************************************************
 # COMPILATION & SIMULATION TARGETS
@@ -86,7 +75,7 @@ sim_%_src:
 syn_%: check_env
 	@echo -e "Synthesizing design...\n"
 	@mkdir -p $(MAP)
-	$(YOSYS) -d -p "read_verilog -sv -noblackbox $(SRC)/*; synth -top $*; dfflibmap -liberty $(LIBERTY); abc -liberty $(LIBERTY); clean; write_verilog -noattr -noexpr -nohex -nodec -defparam $(MAP)/$*.v" > $*.log
+	$(YOSYS) -d -p "read_verilog -sv -noblackbox $(SRC)/*; synth_ice40 -top $*; write_verilog -noattr -noexpr -nohex -nodec -defparam $(MAP)/$*.v" > $*.log
 	@echo -e "\nSynthesis complete!\n"
 
 

@@ -16,5 +16,12 @@ module top (
   input  logic txready, rxready
 );
   // Your code goes here...
+fa4 asdfd(
+  .A(pb[3:0]),
+  .B(pb[7:4]),
+  .Cin(pb[8]),
+  .S(right[3:0]),
+  .Cout(right[4])
+);
 
 endmodule
